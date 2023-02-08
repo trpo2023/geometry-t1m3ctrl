@@ -1,7 +1,14 @@
 #include <stdio.h>
 
+typedef struct circle {
+    float x, y;
+    float radius;
+};
+
 int main()
 {
-    printf("Hello world!\n");
+    float x, y;
+    float r;
+
     return 0;
 }
