@@ -75,6 +75,7 @@ int main()
             if (fgets(str1, MAX_SIZE, geometry) != NULL) {
                 int len = strlen(str1);
                 char name[len];
+                printf("%d. %s", line, str1);
 
                 for (int i = 0; i < len; i++) {
                     if (str1[i] == '(') {
