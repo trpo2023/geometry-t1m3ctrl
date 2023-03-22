@@ -1,5 +1,9 @@
 #include "../include/errors.h"
 #include "../include/geometry.h"
+#include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #define MAX_SIZE 300
 
