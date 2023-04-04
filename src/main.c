@@ -1,9 +1,10 @@
-#include "../include/errors.h"
-#include "../include/geometry.h"
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include <errors.h>
+#include <geometry.h>
 
 #define MAX_SIZE 300
 
@@ -36,6 +37,7 @@ int main()
             if (fgets(str1, MAX_SIZE, geometry) != NULL) {
                 int len = strlen(str1);
                 char name[len];
+                long int column = 0;
                 printf("%d. %s", line, str1);
 
                 for (int i = 0; i < len; i++) {
@@ -46,13 +48,14 @@ int main()
                     name[i] = tolower(str1[i]);
                 }
 
-                error_num = BasicErrorChecker(str1, len, name, line);
+                error_num = BasicErrorChecker(str1, len, name, &column);
 
                 if (error_num == 0) {
                     if (strncmp(name, figure_name[0], strlen(figure_name[0]))
                         == 0) {
-                        if (CircleContentErrorChecker(str1, len, line) == 0) {
-                            tmp_circle = CircleExtractor(str1, len, line);
+                        error_num = CircleContentErrorChecker(str1, len);
+                        if (error_num == 0) {
+                            tmp_circle = CircleExtractor(str1, len);
                             circles[id_circle] = *tmp_circle;
                             id_circle++;
                         }
@@ -71,6 +74,9 @@ int main()
                     //     polygons[id_polygon] = *tmp_polygon;
                     //     id_polygon++;
                     // }
+                }
+                if (error_num != 0) {
+                    ErrorOutput(error_num, line, column);
                 }
                 line++;
             }

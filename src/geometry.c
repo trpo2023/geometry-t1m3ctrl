@@ -1,13 +1,14 @@
-#include "../include/geometry.h"
 #include <ctype.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include <geometry.h>
+
 #define M_PI 3.14159265358979323846
 
-Circle* CircleExtractor(char* str, long int len, int line)
+Circle* CircleExtractor(char* str, long int len)
 {
     Circle* temporary = (Circle*)malloc(sizeof(Circle));
     char* bracket_open_first = strchr(str, '(');

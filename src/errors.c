@@ -1,26 +1,27 @@
-#include "../include/errors.h"
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-int BasicErrorChecker(char* str, long int len, char* name, int line)
+#include <errors.h>
+
+int BasicErrorChecker(char* str, long int len, char* name, long int* column)
 {
     int error_num = 0;
 
-    error_num = NameErrorChecker(name, line);
+    error_num = NameErrorChecker(name, column);
     if (error_num == 0) {
-        error_num = BracketsErrorChecker(str, line, strlen(name) - 1);
+        error_num = BracketsErrorChecker(str, strlen(name) - 1, column);
         if (error_num == 0) {
-            error_num = UnexpectedTokenErrorChecker(str, line);
+            error_num = UnexpectedTokenErrorChecker(str, column);
         }
     }
     return error_num;
 }
 
-int BracketsErrorChecker(char* str, int line, long int name_len)
+int BracketsErrorChecker(char* str, long int name_len, long int* column)
 {
-    int column = 0;
+    int column_func = 0;
     int error_column_open;
     int error_column_close;
     int column_flag = 0;
@@ -28,51 +29,37 @@ int BracketsErrorChecker(char* str, int line, long int name_len)
     int stack = 0;
     do {
         if (*str == '(') {
-            error_column_open = column;
+            error_column_open = column_func;
             column_flag = 1;
             stack++;
             str++;
         } else {
             if (*str == ')') {
-                error_column_close = column;
+                error_column_close = column_func;
                 if (--stack < 0) {
                     if (column_flag == 1) {
                         error_flag_brackets = 1;
-                        printf("%sError: expected '(' [line %d column "
-                               "%d]%s\n",
-                               RED,
-                               line,
-                               error_column_open + 1,
-                               RESET);
+                        *column = error_column_open + 1;
                         break;
                     } else if (column_flag == 0) {
                         error_flag_brackets = 1;
-                        printf("%sError: expected '(' [line %d column "
-                               "%ld]%s\n",
-                               RED,
-                               line,
-                               name_len,
-                               RESET);
+                        *column = name_len;
                         break;
                     }
                 }
             }
             str++;
         }
-        column++;
+        column_func++;
     } while (*str);
     if (stack > 0) {
-        error_flag_brackets = 1;
-        printf("%sError: expected ')' [line %d column %d]%s\n",
-               RED,
-               line,
-               error_column_close + 1,
-               RESET);
+        error_flag_brackets = 5;
+        *column = error_column_close + 1;
     }
     return error_flag_brackets;
 }
 
-int NameErrorChecker(char* str, int line)
+int NameErrorChecker(char* str, long int* column)
 {
     char figure_name[][10] = {"circle", "triangle", "polygon"};
     int i, error_flag_name = 2;
@@ -82,16 +69,11 @@ int NameErrorChecker(char* str, int line)
         }
     }
     if (error_flag_name != 0)
-        printf("%sError: expected 'circle', 'triangle' or 'polygon' [line "
-               "%d "
-               "column 0]%s\n",
-               RED,
-               line,
-               RESET);
+        *column = 0;
     return error_flag_name;
 }
 
-int UnexpectedTokenErrorChecker(char* str, int line)
+int UnexpectedTokenErrorChecker(char* str, long int* column)
 {
     int error_flag_token = 0;
 
@@ -101,18 +83,13 @@ int UnexpectedTokenErrorChecker(char* str, int line)
 
     if (bracket_closed_last - str + 2 != strlen(str)) {
         error_flag_token = 3;
-        printf("%sError: unexpected token [line %d "
-               "column %ld]%s\n",
-               RED,
-               line,
-               bracket_closed_last - str + 1,
-               RESET);
+        *column = bracket_closed_last - str + 1;
     }
 
     return error_flag_token;
 }
 
-int isNumber(char* str, int line)
+int isNumber(char* str)
 {
     int floating_point = 0;
     int i;
@@ -126,37 +103,24 @@ int isNumber(char* str, int line)
             continue;
         } else if ((isdigit(str[minus]) == 0) || (isdigit(str[len - 1]) == 0)) {
             error_flag_container = 4;
-            printf("%sError: expected <double> in brackets [line %d]%s\n",
-                   RED,
-                   line,
-                   RESET);
             break;
         } else if (((i > minus) || (i < len - 1)) && (str[i] == '.')) {
             floating_point++;
             if (floating_point > 1) {
                 error_flag_container = 4;
-                printf("%sError: expected <double> in brackets [line "
-                       "%d]%s\n",
-                       RED,
-                       line,
-                       RESET);
                 break;
             }
         } else if (
                 ((i > minus) || (i < len - 1))
                 && ((isdigit(str[i]) == 0) && (str[i] != '.'))) {
             error_flag_container = 4;
-            printf("%sError: expected <double> in brackets [line %d]%s\n",
-                   RED,
-                   line,
-                   RESET);
             break;
         }
     }
     return error_flag_container;
 }
 
-int CircleContentErrorChecker(char* str, long int len, int line)
+int CircleContentErrorChecker(char* str, long int len)
 {
     char* bracket_open_first = strchr(str, '(');
     char* bracket_closed_last = strrchr(str, ')');
@@ -171,24 +135,75 @@ int CircleContentErrorChecker(char* str, long int len, int line)
     container[j + 1] = '\0';
 
     istr = strtok(container, sep);
-    error_extract = isNumber(istr, line);
+    error_extract = isNumber(istr);
     if (error_extract == 0) {
         istr = strtok(0, sep);
-        error_extract = isNumber(istr, line);
+        error_extract = isNumber(istr);
         if (error_extract == 0) {
             istr = strtok(0, sep);
-            error_extract = isNumber(istr, line);
+            error_extract = isNumber(istr);
             if (error_extract == 0) {
                 istr = strtok(0, sep);
                 if (istr)
-                    printf("%sError: unexpected token in brackets [line "
-                           "%d]%s\n",
-                           RED,
-                           line,
-                           RESET);
+                    error_extract = 6;
             }
         }
     }
 
     return error_extract;
+}
+
+void ErrorOutput(int error_num, int line, long int column)
+{
+    switch (error_num) {
+    case 1:
+        printf("%sError: expected '(' [line %d column "
+               "%ld]%s\n",
+               RED,
+               line,
+               column,
+               RESET);
+        break;
+    case 2:
+        printf("%sError: expected 'circle', 'triangle' or "
+               "'polygon' [line "
+               "%d "
+               "column %ld]%s\n",
+               RED,
+               line,
+               column,
+               RESET);
+        break;
+    case 3:
+        printf("%sError: unexpected token [line %d "
+               "column %ld]%s\n",
+               RED,
+               line,
+               column,
+               RESET);
+        break;
+    case 4:
+        printf("%sError: expected <double> in brackets [line "
+               "%d]%s\n",
+               RED,
+               line,
+               RESET);
+        break;
+    case 5:
+        printf("%sError: expected ')' [line %d column %ld]%s\n",
+               RED,
+               line,
+               column,
+               RESET);
+        break;
+    case 6:
+        printf("%sError: unexpected token in brackets [line "
+               "%d]%s\n",
+               RED,
+               line,
+               RESET);
+        break;
+    default:
+        break;
+    }
 }

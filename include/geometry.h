@@ -27,7 +27,7 @@ typedef struct {
 //     int* intersects;
 // } Polygon;
 
-Circle* CircleExtractor(char* str, long int len, int line);
+Circle* CircleExtractor(char* str, long int len);
 double CircleAreaCalc(double radius);
 double CirclePerimeterCalc(double radius);
 // Triangle* TriangleExtractor(char* str, long int len, int line);
