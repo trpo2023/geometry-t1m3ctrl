@@ -189,3 +189,63 @@ CTEST(lextest, test5)
     ASSERT_DBL_NEAR_TOL(-451231.126665, circ->center.y, tol);
     ASSERT_DBL_NEAR_TOL(200009.123129, circ->radius, tol);
 }
+
+CTEST(calctest, test1)
+{
+    Circle* circ;
+    char str[] = "circle(0 0, 10) ";
+    long int len = strlen(str);
+    circ = CircleExtractor(str, len);
+    double tol = 0.01;
+
+    circ->area = CircleAreaCalc(circ->radius);
+    circ->perimeter = CirclePerimeterCalc(circ->radius);
+
+    ASSERT_DBL_NEAR_TOL(314.16, circ->area, tol);
+    ASSERT_DBL_NEAR_TOL(62.83, circ->perimeter, tol);
+}
+
+CTEST(calctest, test2)
+{
+    Circle* circ;
+    char str[] = "circle(0 0, 0) ";
+    long int len = strlen(str);
+    circ = CircleExtractor(str, len);
+    double tol = 0.01;
+
+    circ->area = CircleAreaCalc(circ->radius);
+    circ->perimeter = CirclePerimeterCalc(circ->radius);
+
+    ASSERT_DBL_NEAR_TOL(0, circ->area, tol);
+    ASSERT_DBL_NEAR_TOL(0, circ->perimeter, tol);
+}
+
+CTEST(calctest, test3)
+{
+    Circle* circ;
+    char str[] = "circle(-100 -10000, -10) ";
+    long int len = strlen(str);
+    circ = CircleExtractor(str, len);
+    double tol = 0.01;
+
+    circ->area = CircleAreaCalc(circ->radius);
+    circ->perimeter = CirclePerimeterCalc(circ->radius);
+
+    ASSERT_DBL_NEAR_TOL(314.16, circ->area, tol);
+    ASSERT_DBL_NEAR_TOL(62.83, circ->perimeter, tol);
+}
+
+CTEST(calctest, test4)
+{
+    Circle* circ;
+    char str[] = "circle(-100 -10000, 0) ";
+    long int len = strlen(str);
+    circ = CircleExtractor(str, len);
+    double tol = 0.01;
+
+    circ->area = CircleAreaCalc(circ->radius);
+    circ->perimeter = CirclePerimeterCalc(circ->radius);
+
+    ASSERT_DBL_NEAR_TOL(0, circ->area, tol);
+    ASSERT_DBL_NEAR_TOL(0, circ->perimeter, tol);
+}
