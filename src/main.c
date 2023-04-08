@@ -57,17 +57,26 @@ int main()
     }
 
     puts("\nOutput");
-    for (int i = 0; i < id_circle; i++) {
+    for (int i = 0, j; i < id_circle; i++) {
         circles[i].area = CircleAreaCalc(circles[i].radius);
         circles[i].perimeter = CirclePerimeterCalc(circles[i].perimeter);
+        circles[i].intersects
+                = IntersectsDetector(circles[i], circles, id_circle, i);
         printf("\n%d. circle(%.1lf %.1lf, %.1lf)\n\tperimeter = %.1lf\n\tarea "
-               "= %.1lf\n",
+               "= %.1lf",
                i + 1,
                circles[i].center.x,
                circles[i].center.y,
                circles[i].radius,
                circles[i].perimeter,
                circles[i].area);
+        printf("\n\tintersects:");
+        for (j = 0; (j < id_circle); j++) {
+            if (circles[i].intersects[j] == 0)
+                continue;
+            printf("\n\t%d. circle", circles[i].intersects[j]);
+        }
+        puts("");
     }
     return 0;
 }

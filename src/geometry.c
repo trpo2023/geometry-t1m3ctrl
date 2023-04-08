@@ -46,6 +46,33 @@ double CirclePerimeterCalc(double radius)
     return perimeter;
 }
 
+int* IntersectsDetector(
+        Circle our_circ, Circle* other_circs, int circs_cnt, int circ_id)
+{
+    int* intersects;
+    int inter_count = 0;
+    intersects = (int*)malloc(circs_cnt * sizeof(int));
+    for (int i = 0; i < circs_cnt; i++) {
+        if (i == circ_id) {
+            intersects[inter_count] = 0;
+            inter_count++;
+            continue;
+        }
+        double distance
+                = sqrt(pow(our_circ.center.x - other_circs[i].center.x, 2)
+                       + pow(our_circ.center.y - other_circs[i].center.y, 2));
+        double radius_sum = our_circ.radius + other_circs[i].radius;
+
+        if (distance <= radius_sum)
+            intersects[inter_count] = i + 1;
+        else
+            intersects[inter_count] = 0;
+
+        inter_count++;
+    }
+
+    return intersects;
+}
 // Triangle* TriangleExtractor(char* str, long int len, int line)
 // {
 // }
