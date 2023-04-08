@@ -5,11 +5,12 @@
 
 #include <errors.h>
 
-int BasicErrorChecker(char* str, long int len, char* name, long int* column)
+int BasicErrorChecker(
+        char* str, long int len, char* name, long int* column, int* type_id)
 {
     int error_num = 0;
 
-    error_num = NameErrorChecker(name, column);
+    error_num = NameErrorChecker(name, column, type_id);
     if (error_num == 0) {
         error_num = BracketsErrorChecker(str, strlen(name) - 1, column);
         if (error_num == 0) {
@@ -59,15 +60,17 @@ int BracketsErrorChecker(char* str, long int name_len, long int* column)
     return error_flag_brackets;
 }
 
-int NameErrorChecker(char* str, long int* column)
+int NameErrorChecker(char* str, long int* column, int* type_id)
 {
     char figure_name[][10] = {"circle", "triangle", "polygon"};
     int i, error_flag_name = 2;
     for (i = 0; i < 3; i++) {
         if (strncmp(str, figure_name[i], strlen(figure_name[i])) == 0) {
             error_flag_name = 0;
+            break;
         }
     }
+    (*type_id) = i;
     if (error_flag_name != 0)
         *column = 0;
     return error_flag_name;
@@ -151,6 +154,29 @@ int CircleContentErrorChecker(char* str, long int len)
     }
 
     return error_extract;
+}
+
+int isWKT(char* str, long int* column, int* type_id)
+{
+    int len = strlen(str);
+    char name[len];
+    int error_num = 0;
+
+    for (int i = 0; i < len; i++) {
+        if (str[i] == '(') {
+            name[i] = '\0';
+            break;
+        }
+        name[i] = tolower(str[i]);
+    }
+
+    error_num = BasicErrorChecker(str, len, name, column, type_id);
+
+    if ((error_num == 0) && (*type_id == 0)) {
+        error_num = CircleContentErrorChecker(str, len);
+    }
+
+    return error_num;
 }
 
 void ErrorOutput(int error_num, int line, long int column)
