@@ -37,7 +37,7 @@ int main()
             if (fgets(str1, MAX_SIZE, geometry) != NULL) {
                 printf("%d. %s", line, str1);
                 long int column = 0;
-                int len = strlen(str1);
+                long int len = strlen(str1);
                 int type_id = 0;
                 error_num = isWKT(str1, &column, &type_id);
 

@@ -29,7 +29,7 @@ Circle* CircleExtractor(char* str, long int len)
     istr = strtok(0, sep);
     temporary->center.y = atof(istr);
     istr = strtok(0, sep);
-    temporary->radius = atof(istr);
+    temporary->radius = fabs(atof(istr));
 
     return temporary;
 }
