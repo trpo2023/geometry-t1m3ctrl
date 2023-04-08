@@ -127,3 +127,65 @@ CTEST(partest, test9)
     ASSERT_EQUAL(2, type_id);
     ASSERT_EQUAL(0, column);
 }
+
+CTEST(lextest, test1)
+{
+    Circle* circ;
+    char str[] = "circle(10 0, 1.5) ";
+    long int len = strlen(str);
+    circ = CircleExtractor(str, len);
+
+    ASSERT_DBL_NEAR(10, circ->center.x);
+    ASSERT_DBL_NEAR(0, circ->center.y);
+    ASSERT_DBL_NEAR(1.5, circ->radius);
+}
+
+CTEST(lextest, test2)
+{
+    Circle* circ;
+    char str[] = "circle(0 0, 0) ";
+    long int len = strlen(str);
+    circ = CircleExtractor(str, len);
+
+    ASSERT_DBL_NEAR(0, circ->center.x);
+    ASSERT_DBL_NEAR(0, circ->center.y);
+    ASSERT_DBL_NEAR(0, circ->radius);
+}
+
+CTEST(lextest, test3)
+{
+    Circle* circ;
+    char str[] = "circle(0 0, -2) ";
+    long int len = strlen(str);
+    circ = CircleExtractor(str, len);
+
+    ASSERT_DBL_NEAR(0, circ->center.x);
+    ASSERT_DBL_NEAR(0, circ->center.y);
+    ASSERT_DBL_NEAR(2, circ->radius);
+}
+
+CTEST(lextest, test4)
+{
+    Circle* circ;
+    char str[] = "circle(32.123123 -45.126665, -2.123129) ";
+    long int len = strlen(str);
+    circ = CircleExtractor(str, len);
+    double tol = 0.00001;
+
+    ASSERT_DBL_NEAR_TOL(32.123123, circ->center.x, tol);
+    ASSERT_DBL_NEAR_TOL(-45.126665, circ->center.y, tol);
+    ASSERT_DBL_NEAR_TOL(2.123129, circ->radius, tol);
+}
+
+CTEST(lextest, test5)
+{
+    Circle* circ;
+    char str[] = "circle(321231.123123 -451231.126665, -200009.123129) ";
+    long int len = strlen(str);
+    circ = CircleExtractor(str, len);
+    double tol = 0.005;
+
+    ASSERT_DBL_NEAR_TOL(321231.123123, circ->center.x, tol);
+    ASSERT_DBL_NEAR_TOL(-451231.126665, circ->center.y, tol);
+    ASSERT_DBL_NEAR_TOL(200009.123129, circ->radius, tol);
+}
