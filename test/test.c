@@ -10,7 +10,7 @@
 // 1 - triangle
 // 2 - polygon
 
-CTEST(partest, test1)
+CTEST(partest, test_name_1)
 {
     char str[] = "poawlygon((3 -2.0, 3.0 2, 1.0 0, 3.0 -2, 3.0 2, 3 -2.0)) ";
     int type_id = 0;
@@ -23,7 +23,7 @@ CTEST(partest, test1)
     ASSERT_EQUAL(0, column);
 }
 
-CTEST(partest, test2)
+CTEST(partest, test_double_in_brackets_1)
 {
     char str[] = "circle(10x 0, 1.5) ";
     int type_id = 0;
@@ -36,7 +36,7 @@ CTEST(partest, test2)
     ASSERT_EQUAL(0, column);
 }
 
-CTEST(partest, test3)
+CTEST(partest, test_double_in_brackets_2)
 {
     char str[] = "circle(10 0, 1..5) ";
     int type_id = 0;
@@ -49,7 +49,7 @@ CTEST(partest, test3)
     ASSERT_EQUAL(0, column);
 }
 
-CTEST(partest, test4)
+CTEST(partest, test_left_bracket)
 {
     char str[] = "circle(10 0, 1.5)) ";
 
@@ -63,7 +63,7 @@ CTEST(partest, test4)
     ASSERT_EQUAL(7, column);
 }
 
-CTEST(partest, test5)
+CTEST(partest, test_right_bracket)
 {
     char str[] = "circle((10 0, 1.5) ";
     int type_id = 0;
@@ -76,7 +76,7 @@ CTEST(partest, test5)
     ASSERT_EQUAL(18, column);
 }
 
-CTEST(partest, test6)
+CTEST(partest, test_token_after_brackets)
 {
     char str[] = "circle(10 0, 1.5) wowo ";
     int type_id = 0;
@@ -89,7 +89,7 @@ CTEST(partest, test6)
     ASSERT_EQUAL(17, column);
 }
 
-CTEST(partest, test7)
+CTEST(partest, test_unneded_token)
 {
     char str[] = "circle(10 0, 1.5 1.4) ";
     int type_id = 0;
@@ -102,7 +102,7 @@ CTEST(partest, test7)
     ASSERT_EQUAL(0, column);
 }
 
-CTEST(partest, test8)
+CTEST(partest, test_name_2)
 {
     char str[] = "triangle((-3.0 -2, -1 0.0, -3.0 2.0, -3 -2)) ";
     int type_id = 0;
@@ -115,7 +115,7 @@ CTEST(partest, test8)
     ASSERT_EQUAL(0, column);
 }
 
-CTEST(partest, test9)
+CTEST(partest, test_name_3)
 {
     char str[] = "polygon((-3.0 -2, -1 0.0, -3.0 2.0, -3 -2)) ";
     int type_id = 0;
@@ -128,7 +128,7 @@ CTEST(partest, test9)
     ASSERT_EQUAL(0, column);
 }
 
-CTEST(lextest, test1)
+CTEST(lextest, test_CircleExtracor_func_1)
 {
     Circle* circ;
     char str[] = "circle(10 0, 1.5) ";
@@ -140,7 +140,7 @@ CTEST(lextest, test1)
     ASSERT_DBL_NEAR(1.5, circ->radius);
 }
 
-CTEST(lextest, test2)
+CTEST(lextest, test_CircleExtracor_func_2)
 {
     Circle* circ;
     char str[] = "circle(0 0, 0) ";
@@ -152,7 +152,7 @@ CTEST(lextest, test2)
     ASSERT_DBL_NEAR(0, circ->radius);
 }
 
-CTEST(lextest, test3)
+CTEST(lextest, test_CircleExtracor_func_3)
 {
     Circle* circ;
     char str[] = "circle(0 0, -2) ";
@@ -164,7 +164,7 @@ CTEST(lextest, test3)
     ASSERT_DBL_NEAR(2, circ->radius);
 }
 
-CTEST(lextest, test4)
+CTEST(lextest, test_CircleExtracor_func_4)
 {
     Circle* circ;
     char str[] = "circle(32.123123 -45.126665, -2.123129) ";
@@ -177,7 +177,7 @@ CTEST(lextest, test4)
     ASSERT_DBL_NEAR_TOL(2.123129, circ->radius, tol);
 }
 
-CTEST(lextest, test5)
+CTEST(lextest, test_CircleExtracor_func_5)
 {
     Circle* circ;
     char str[] = "circle(321231.123123 -451231.126665, -200009.123129) ";
@@ -190,7 +190,7 @@ CTEST(lextest, test5)
     ASSERT_DBL_NEAR_TOL(200009.123129, circ->radius, tol);
 }
 
-CTEST(calctest, test1)
+CTEST(calctest, test_math_1)
 {
     Circle* circ;
     char str[] = "circle(0 0, 10) ";
@@ -205,7 +205,7 @@ CTEST(calctest, test1)
     ASSERT_DBL_NEAR_TOL(62.83, circ->perimeter, tol);
 }
 
-CTEST(calctest, test2)
+CTEST(calctest, test_math_2)
 {
     Circle* circ;
     char str[] = "circle(0 0, 0) ";
@@ -220,7 +220,7 @@ CTEST(calctest, test2)
     ASSERT_DBL_NEAR_TOL(0, circ->perimeter, tol);
 }
 
-CTEST(calctest, test3)
+CTEST(calctest, test_math_3)
 {
     Circle* circ;
     char str[] = "circle(-100 -10000, -10) ";
@@ -235,7 +235,7 @@ CTEST(calctest, test3)
     ASSERT_DBL_NEAR_TOL(62.83, circ->perimeter, tol);
 }
 
-CTEST(calctest, test4)
+CTEST(calctest, test_math_4)
 {
     Circle* circ;
     char str[] = "circle(-100 -10000, 0) ";
@@ -249,3 +249,18 @@ CTEST(calctest, test4)
     ASSERT_DBL_NEAR_TOL(0, circ->area, tol);
     ASSERT_DBL_NEAR_TOL(0, circ->perimeter, tol);
 }
+
+// CTEST(intertest, test1)
+// {
+//     Circle circle[1];
+//     int intersects[2] = {0, 1};
+//     circle[0].center.x = 0;
+//     circle[0].center.y = 0;
+//     circle[0].radius = 10;
+//     circle[1].center.x = 0;
+//     circle[1].center.y = 0;
+//     circle[1].radius = 10.0;
+//     circle[0].intersects = IntersectsDetector(circle[0], circle, 1, 0);
+
+//     ASSERT_DATA(intersects, 2, circle[0].intersects, 2);
+// }
