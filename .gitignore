@@ -1,0 +1,8 @@
+*.o
+*.c'
+*.obj
+main
+main.exe
+.vscode
+build
+
