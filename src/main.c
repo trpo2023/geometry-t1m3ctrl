@@ -22,7 +22,7 @@ int main()
     // Polygon* tmp_polygon;
 
     char str1[MAX_SIZE];
-    char figure_name[][10] = {"circle", "triangle", "polygon"};
+    // char figure_name[][10] = {"circle", "triangle", "polygon"};
 
     int line, error_num = 0, id_circle = 0;
     // int id_triangle = 0, id_polygon = 0;
@@ -35,46 +35,18 @@ int main()
         line = 1;
         while (!feof(geometry)) {
             if (fgets(str1, MAX_SIZE, geometry) != NULL) {
-                int len = strlen(str1);
-                char name[len];
-                long int column = 0;
                 printf("%d. %s", line, str1);
+                long int column = 0;
+                long int len = strlen(str1);
+                int type_id = 0;
+                error_num = isWKT(str1, &column, &type_id);
 
-                for (int i = 0; i < len; i++) {
-                    if (str1[i] == '(') {
-                        name[i] = '\0';
-                        break;
-                    }
-                    name[i] = tolower(str1[i]);
+                if ((error_num == 0) && (type_id == 0)) {
+                    tmp_circle = CircleExtractor(str1, len);
+                    circles[id_circle] = *tmp_circle;
+                    id_circle++;
                 }
 
-                error_num = BasicErrorChecker(str1, len, name, &column);
-
-                if (error_num == 0) {
-                    if (strncmp(name, figure_name[0], strlen(figure_name[0]))
-                        == 0) {
-                        error_num = CircleContentErrorChecker(str1, len);
-                        if (error_num == 0) {
-                            tmp_circle = CircleExtractor(str1, len);
-                            circles[id_circle] = *tmp_circle;
-                            id_circle++;
-                        }
-                    }
-
-                    // if (strncmp(name, figure_name[1], strlen(figure_name[1]))
-                    //     == 0) {
-                    //     tmp_triangle = TriangleExtractor(str1, len, line);
-                    //     triangles[id_triangle] = *tmp_triangle;
-                    //     id_triangle++;
-                    // }
-
-                    // if (strncmp(name, figure_name[2], strlen(figure_name[2]))
-                    //     == 0) {
-                    //     tmp_polygon = PolygonExtractor(str1, len, line);
-                    //     polygons[id_polygon] = *tmp_polygon;
-                    //     id_polygon++;
-                    // }
-                }
                 if (error_num != 0) {
                     ErrorOutput(error_num, line, column);
                 }
@@ -85,17 +57,26 @@ int main()
     }
 
     puts("\nOutput");
-    for (int i = 0; i < id_circle; i++) {
+    for (int i = 0, j; i < id_circle; i++) {
         circles[i].area = CircleAreaCalc(circles[i].radius);
         circles[i].perimeter = CirclePerimeterCalc(circles[i].perimeter);
+        circles[i].intersects
+                = IntersectsDetector(circles[i], circles, id_circle, i);
         printf("\n%d. circle(%.1lf %.1lf, %.1lf)\n\tperimeter = %.1lf\n\tarea "
-               "= %.1lf\n",
+               "= %.1lf",
                i + 1,
                circles[i].center.x,
                circles[i].center.y,
                circles[i].radius,
                circles[i].perimeter,
                circles[i].area);
+        printf("\n\tintersects:");
+        for (j = 0; (j < id_circle); j++) {
+            if (circles[i].intersects[j] == 0)
+                continue;
+            printf("\n\t%d. circle", circles[i].intersects[j]);
+        }
+        puts("");
     }
     return 0;
 }
